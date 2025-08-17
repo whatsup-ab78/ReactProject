@@ -1,30 +1,39 @@
-const express=require('express');
-const mongoose=require('mongoose');
-const cors=require("cors");
+// Importing required modules
+const express = require('express');
+const mongoose = require('mongoose');
+const cors =require("cors");
 const formRoutes=require('./routes/formRoutes');
 
-const app=express();
-const port=3001;
+// Creating an express app instance
+const app = express();
 
+// Setting the port for the server
+const port = 3001;
+
+app.use(cors());
+// Middleware to parse JSON data from incoming requests
 app.use(express.json());
-mongoose.connect('mongodb://localhost:27017/mydbproject',{
-    useNewUrlParser:true,
-    useUnifiedTopology:true
+
+// MongoDB connection setup with correct options
+mongoose.connect('mongodb://localhost:27017/mydbproject', {
+    useNewUrlParser: true,   // Use new URL parser (to avoid warnings)
+    useUnifiedTopology: true // Use unified topology (recommended for MongoDB)
 })
-
-.then(()=>{
-    console.log('connected to MongoDB');
+.then(() => {
+    console.log('Connected to MongoDB');
 })
-.catch((error)=>{
-    console.error('Error connecting to MongoDB:',error);
+.catch((err) => {
+    console.log('Error connecting to MongoDB: ', err);
+});
+// Define a simple route to test the server
+app.get('/', (req, res) => {
+    res.send('Connected to MongoDB!');
+});
+// 
+app.use('/api', formRoutes);
+// app.post('/submit', savedata);
+
+app.listen(port, () => {
+    console.log(`Server running on http:localhost:${port}`);
 });
 
-app.listen(port,()=>{
-    console.log(`server is running on http://localhost:${port}`);
-});
-
-app.get('/', (req,res)=>{
-    res.send('connected to mongodb!');
-});
-
-app.use('/api',formRoutes);
